@@ -9,11 +9,9 @@ public class DiscountUtil {
     public double computeDiscount(Order order) {
         double price = order.getQuantity() * order.getUnitPrice(); // temp
         // поясняющая логика: скидка 10% если цена > 100, 5% если > 50
-        boolean isBig = price > 100;
-        boolean isMedium = price > 50 && price <= 100;
-        if (isBig) {
+        if (price > 100) {
             return price * 0.10;
-        } else if (isMedium) {
+        } else if (price > 50 && price <= 100) {
             return price * 0.05;
         } else {
             return 0.0;
