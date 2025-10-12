@@ -3,7 +3,7 @@ package refactoring.util;
 public class TaxUtil {
     // REFACTORING CANDIDATE: Remove Assignments to Parameters (Происходит
     // присвоение параметру amount нового значения)
-    public double computeTax(double amount, double rate) {
+    public double calcTax(double amount, double rate) {
         // REFACTORING CANDIDATE: Inline Temp (Переменная constant не несёт смысловой
         // нагрузки, поэтому можно встроить её значение в связанное выражение)
         double constant = 1.0;

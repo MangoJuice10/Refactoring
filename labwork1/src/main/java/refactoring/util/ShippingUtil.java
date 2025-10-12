@@ -4,7 +4,7 @@ import refactoring.model.Order;
 
 public class ShippingUtil {
 
-    public double shippingForOrder(Order order) {
+    public double calcShippingPrice(Order order) {
         // REFACTORING CANDIDATE: Extract Method (Код для вычисления стоимости заказа
         // можно вынести в отдельный метод calcOrderPrice)
         double price = order.getQuantity() * order.getUnitPrice();

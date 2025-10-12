@@ -21,9 +21,9 @@ public class RefactoringTests {
         Order medium = new Order("B", 5, 12.0, 2.0); // price 60 -> 5% -> 3.0
         Order big = new Order("C", 10, 20.0, 5.0); // price 200 -> 10% -> 20.0
 
-        assertEquals(0.0, du.computeDiscount(small), 1e-9);
-        assertEquals(3.0, du.computeDiscount(medium), 1e-9);
-        assertEquals(20.0, du.computeDiscount(big), 1e-9);
+        assertEquals(0.0, du.calcDiscount(small), 1e-9);
+        assertEquals(3.0, du.calcDiscount(medium), 1e-9);
+        assertEquals(20.0, du.calcDiscount(big), 1e-9);
     }
 
     @Test
@@ -31,19 +31,19 @@ public class RefactoringTests {
         ShippingUtil su = new ShippingUtil();
         Order o1 = new Order("S1", 1, 10.0, 3.0); // price 10 -> shipping = 5 + 2*3 = 11
         Order o2 = new Order("S2", 20, 11.0, 5.0); // price 220 -> free shipping 0
-        assertEquals(11.0, su.shippingForOrder(o1), 1e-9);
-        assertEquals(0.0, su.shippingForOrder(o2), 1e-9);
+        assertEquals(11.0, su.calcShippingPrice(o1), 1e-9);
+        assertEquals(0.0, su.calcShippingPrice(o2), 1e-9);
     }
 
     @Test
     void testTaxUtil_assignsParameterBehavior() {
         TaxUtil tu = new TaxUtil();
         // computeTax adds 1.0 to amount; this is part of current behavior and must be preserved by tests
-        double result = tu.computeTax(99.0, 0.1); // (99+1)*0.1 = 10.0
+        double result = tu.calcTax(99.0, 0.1); // (99+1)*0.1 = 10.0
         assertEquals(10.0, result, 1e-9);
 
         // negative rate becomes 0
-        assertEquals(0.0, tu.computeTax(10.0, -0.5), 1e-9);
+        assertEquals(0.0, tu.calcTax(10.0, -0.5), 1e-9);
     }
 
     @Test
@@ -63,7 +63,7 @@ public class RefactoringTests {
         double tax = 283 * 0.1;
         double expected = subtotal - discounts + shipping + tax; // 310 - 28 + 9 + 28.3 = 319.3
 
-        assertEquals(expected, service.calculateInvoiceTotal(orders), 1e-9);
+        assertEquals(expected, service.calcInvoiceTotal(orders), 1e-9);
     }
 
     @Test
