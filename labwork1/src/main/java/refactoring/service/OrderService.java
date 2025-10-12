@@ -34,7 +34,7 @@ public class OrderService {
         return result;
     }
 
-    public double calcInvoiceShippingPrice(List<Order> orders) {
+    private double calcInvoiceShippingPrice(List<Order> orders) {
         double result = 0.0;
         for (Order o : orders) {
             double shippingPrice = shippingUtil.calcShippingPrice(o);
@@ -43,7 +43,7 @@ public class OrderService {
         return result;
     }
 
-    public double calcInvoiceTax(double invoiceOrderPrice, double invoiceDiscount) {
+    private double calcInvoiceTax(double invoiceOrderPrice, double invoiceDiscount) {
         final double taxable = invoiceOrderPrice - invoiceDiscount;
         double tax = taxUtil.calcTax(taxable, 0.1);
         return tax;
