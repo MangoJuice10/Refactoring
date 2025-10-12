@@ -18,8 +18,6 @@ public class ShippingUtil {
             return 0.0;
         }
 
-        // REFACTORING CANDIDATE: Extract Method (Код для вычисления стоимости
-        // доставки можно вынести в отдельный метод calcShippingCost)
         return base + perKg * order.getWeightKg();
     }
 }
