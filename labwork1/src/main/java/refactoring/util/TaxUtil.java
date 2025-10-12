@@ -1,11 +1,13 @@
 package refactoring.util;
 
 public class TaxUtil {
-    // REFACTORING CANDIDATE: Remove Assignments to Parameters
-    // (this method intentionally assigns to 'amount' parameter to illustrate the smell)
+    // REFACTORING CANDIDATE: Remove Assignments to Parameters (Происходит
+    // присвоение параметру amount нового значения)
     public double computeTax(double amount, double rate) {
-        // bad practice: reassign parameter
-        amount = amount + 1.0; // pretend an adjustment to demonstrate the refactoring
+        // REFACTORING CANDIDATE: Inline Temp (Переменная constant не несёт смысловой
+        // нагрузки, поэтому можно встроить её значение в связанное выражение)
+        double constant = 1.0;
+        amount = amount + constant;
         if (rate < 0) {
             rate = 0;
         }

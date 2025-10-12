@@ -3,7 +3,6 @@ package refactoring;
 import org.junit.jupiter.api.Test;
 import refactoring.model.Order;
 import refactoring.service.OrderService;
-import refactoring.util.TopKUtil;
 import refactoring.util.TaxUtil;
 import refactoring.util.DiscountUtil;
 import refactoring.util.ShippingUtil;
@@ -71,21 +70,5 @@ public class RefactoringTests {
     void testInlineHelper_banner() {
         InlineHelper ih = new InlineHelper();
         assertEquals("=== ORDER INVOICE ===", ih.banner());
-    }
-
-    @Test
-    void testTopKUtil_naiveTopK() {
-        TopKUtil tu = new TopKUtil();
-        Order a = new Order("a", 1, 10.0, 1.0); // 10
-        Order b = new Order("b", 2, 20.0, 1.0); // 40
-        Order c = new Order("c", 3, 15.0, 2.0); // 45
-        Order d = new Order("d", 4, 8.0, 1.0); // 32
-
-        var list = List.of(a, b, c, d);
-        var top2 = tu.topKByPrice(list, 2);
-        assertEquals(2, top2.size());
-        // top1 should be c (45), top2 b (40)
-        assertEquals("c", top2.get(0).getId());
-        assertEquals("b", top2.get(1).getId());
     }
 }

@@ -4,13 +4,16 @@ import refactoring.model.Order;
 
 public class DiscountUtil {
 
-    // REFACTORING CANDIDATE: Replace Temp with Query (price temporary var)
-    // REFACTORING CANDIDATE: Introduce Explaining Variable (explain condition)
     public double computeDiscount(Order order) {
-        double price = order.getQuantity() * order.getUnitPrice(); // temp
-        // поясняющая логика: скидка 10% если цена > 100, 5% если > 50
+        // REFACTORING CANDIDATE: Replace Temp with Query (Временную переменную
+        // 'price' можно заменить вызовом метода calcOrderPrice)
+        double price = order.getQuantity() * order.getUnitPrice();
+        // REFACTORING CANDIDATE: Extract Variable (Условие price > 100
+        // удобно заменить на переменную isPriceBig)
         if (price > 100) {
             return price * 0.10;
+            // REFACTORING CANDIDATE: Extract variable (Условие price > 50 && price <= 100
+            // удобно заменить на переменную isPriceMedium)
         } else if (price > 50 && price <= 100) {
             return price * 0.05;
         } else {
