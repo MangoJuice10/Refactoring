@@ -54,11 +54,6 @@ public class LibrarySystemTest {
     }
 
     @Test
-    public void testIsUserManager() {
-        assertFalse(library.isUserManager(user));
-    }
-
-    @Test
     public void testGetDueDate() {
         Date today = new Date();
         Date tomorrow = new Date(today.getTime() + 86400000);

@@ -25,9 +25,9 @@ public class LibrarySystem {
         return users;
     }
 
-    // This method calculates the total fine for all users, but it uses User data heavily.
-    // It should be moved to User class or a separate FineCalculator class.
-    // /* Suitable for Move Method: This method is in LibrarySystem but operates mostly on User data. Move to User or extract to new class. */
+    // REFACTROING: Move Method (Этот метод вычисляет общую сумму долга всех
+    // пользователей, но использует только метод класса User calculateFine()
+    // Следует переместить этот метод в класс User)
     public double calculateTotalFines() {
         double total = 0.0;
         for (User user : users) {
@@ -36,47 +36,47 @@ public class LibrarySystem {
         return total;
     }
 
-    // This method formats book details including author info, which is mixed responsibilities.
-    // /* Suitable for Extract Class: Book class has both book and author responsibilities. Extract Author class. */
+    // REFACTORING: Extract Class (Класс Book содержит поля одновременно двух
+    // сущностей: Книга и Автор, поэтому после выделения класса необходимо будет
+    // изменить также обращения к исходному классу, связанные с полями и методами
+    // нового класса)
     public String formatBookDetails(Book book) {
         return "Title: " + book.getTitle() + ", Author: " + book.getAuthorName() + " " + book.getAuthorSurname() +
-               ", Birth Year: " + book.getAuthorBirthYear();
+                ", Birth Year: " + book.getAuthorBirthYear();
     }
 
-    // Using a small class TelephoneNumber that can be inlined.
-    // /* Suitable for Inline Class: TelephoneNumber has little responsibility; inline into User. */
+    // REFACTORING: Inline Class (Класс TelephoneNumber имеет слишком мало
+    // обязанностей, и в будущем не предполагается добавлять для него новые
+    // обязанности, поэтому следует произвести встраивание класса TelephoneNumber в
+    // класс User)
     public void updateUserPhone(User user, String number) {
         user.setPhone(new TelephoneNumber(number));
     }
 
-    // Client code that directly accesses delegate.
-    // /* Suitable for Hide Delegate: Client accesses manager through person.getDepartment().getManager(). Hide in Person. */
+    // REFACTORING: Hide Delegate (Класс LibrarySystem обращается к делегату Person
+    // не напрямую, а через сервер Department, поэтому следует добавить в класс
+    // Department делегирующий метод getManagerName())
     public String getUserManagerName(User user) {
         return user.getDepartment().getManager().getName();
     }
 
-    // Server with many delegations.
-    // /* Suitable for Remove Middle Man: Person delegates too much to Department; client should access Department directly if needed. */
-    public boolean isUserManager(User user) {
-        return user.getDepartment().isManager(user);
-    }
-
-    // Foreign method for Date.
-    // /* Suitable for Introduce Foreign Method: nextDay should be in Date, but since we can't modify Date, add as utility in client. */
-    private static Date nextDay(Date arg) {
-        // implementation of next day
-        return new Date(arg.getTime() + 86400000); // 24*60*60*1000
-    }
-
+    // REFACTORING: Introduce Foreign Method (Класс Date библиотеки java.util не
+    // предоставляет метода для получения даты по прошествии одной недели, поэтому
+    // имеет смысл написать внешний метод getNextWeek(Date date), принимающий на
+    // вход объект класса Date, и возвращающий нужную дату)
     public Date getDueDate(Date borrowDate) {
-        return nextDay(borrowDate); // Using foreign method.
+        // Дата возврата книги определяется как неделя спустя момента получения книги
+        Date dueDate = new Date(borrowDate.getTime() + 86400000 * 7); // 24*60*60*1000
+        return dueDate;
     }
 
-    // For Introduce Local Extension: We could extend Date with MfDate, but since it's 7 out of 8, we can comment it.
-    // /* Suitable for Introduce Local Extension: Extend Date with custom methods like isWeekend, but not implemented here to limit to 7. */
+    // For Introduce Local Extension: We could extend Date with MfDate, but since
+    // it's 7 out of 8, we can comment it.
+    // /* Suitable for Introduce Local Extension: Extend Date with custom methods
+    // like isWeekend, but not implemented here to limit to 7. */
 
-    // This field is used more in Book class.
-    // /* Suitable for Move Field: publicationYear is in LibrarySystem but used in Book. Move to Book. */
+    // REFACTORING: Move Field (LibrarySystem никак не использует поле; поле
+    // логически должно находиться в классе Book)
     private int publicationYear = 2020; // Default year, but should be per book.
 
     public int getPublicationYear() {

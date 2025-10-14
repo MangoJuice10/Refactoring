@@ -10,8 +10,4 @@ public class Department {
     public Person getManager() {
         return manager;
     }
-
-    public boolean isManager(User user) {
-        return user.getName().equals(manager.getName());
-    }
 }
