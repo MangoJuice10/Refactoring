@@ -112,7 +112,7 @@ public class LibrarySystem {
         return user.getDepartment().getManagerGreeting();
     }
 
-    // REFACTORING: Introduce Foreign Method (Класс LocalDate библиотеки java.time
+    // REFACTORING: Introduce Local Extension (Класс LocalDate библиотеки java.time
     // не предоставляет множества методов, нужных классу LibrarySystem, поэтому
     // имеет смысл создать локальное расширение LocalDateExtended, представляющее из
     // себя подкласс класса LocalDate либо обёртку над ним.
