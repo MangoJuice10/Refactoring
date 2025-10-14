@@ -3,7 +3,11 @@ package refactoring;
 
 public class Book {
     private String title;
-    private String authorName; // Mixed with author details.
+    // REFACTORING: Extract Class (Класс Book содержит поля одновременно двух
+    // сущностей: Книга и Автор, поэтому после выделения класса необходимо будет
+    // изменить также обращения к исходному классу, связанные с полями и методами
+    // нового класса)
+    private String authorName;
     private String authorSurname;
     private int authorBirthYear;
 

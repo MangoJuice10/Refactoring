@@ -35,7 +35,6 @@ public class User {
         this.borrowDate = date;
     }
 
-    // Calculates fine based on days overdue.
     public double calculateFine() {
         if (borrowDate == null) return 0.0;
         long daysOverdue = (new Date().getTime() - borrowDate.getTime()) / (1000 * 60 * 60 * 24) - 14; // 2 weeks grace

@@ -4,6 +4,7 @@ package refactoring;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 import static org.junit.Assert.*;
@@ -56,7 +57,36 @@ public class LibrarySystemTest {
     @Test
     public void testGetDueDate() {
         Date today = new Date();
-        Date tomorrow = new Date(today.getTime() + 86400000);
-        assertEquals(tomorrow.getTime() / 1000, library.getDueDate(today).getTime() / 1000); // Compare seconds
+        Date tomorrow = new Date(today.getTime() + 86400000 * 7);
+        assertEquals(tomorrow.getTime() / 1000, library.getDueDate(today).getTime() / 1000);
+    }
+
+    @Test
+    public void testFetchUserManagerDelegations() {
+        // проверяем, что LibrarySystem действительно делегирует к Department/Person
+        assertEquals(manager.getEmail(), library.fetchUserManagerEmail(user));
+        assertEquals(manager.getTitle(), library.fetchUserManagerTitle(user));
+        assertEquals(manager.getOffice(), library.fetchUserManagerOffice(user));
+        assertEquals(manager.getPhone(), library.fetchUserManagerPhone(user));
+        assertEquals(manager.getId(), library.fetchUserManagerId(user));
+        assertEquals(manager.getUpperCaseName(), library.fetchUserManagerUpperName(user));
+        assertEquals(manager.getInitials(), library.fetchUserManagerInitials(user));
+        assertEquals(manager.getGreeting(), library.fetchUserManagerGreeting(user));
+    }
+
+    @Test
+    public void testLocalDateUtilitiesBasic() {
+        LocalDate start = LocalDate.of(2025, 10, 10);
+        LocalDate after = library.addBusinessDays(start, 3);
+        // результат не должен быть в субботу/воскресенье
+        assertFalse(after.getDayOfWeek().getValue() == 6 || after.getDayOfWeek().getValue() == 7);
+
+        long d = library.daysBetween(start, start.plusDays(5));
+        assertEquals(5L, d);
+
+        String v = library.verboseLocalDateInfo(start);
+        assertTrue(v.contains("Date:"));
+        assertTrue(v.contains("DayOfYear:"));
+        assertTrue(v.contains("Leap:"));
     }
 }

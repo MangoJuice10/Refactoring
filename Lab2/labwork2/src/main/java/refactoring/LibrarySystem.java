@@ -1,9 +1,10 @@
-// src/main/java/com/example/LibrarySystem.java
 package refactoring;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 
 public class LibrarySystem {
     private List<Book> books = new ArrayList<>();
@@ -70,10 +71,85 @@ public class LibrarySystem {
         return dueDate;
     }
 
-    // For Introduce Local Extension: We could extend Date with MfDate, but since
-    // it's 7 out of 8, we can comment it.
-    // /* Suitable for Introduce Local Extension: Extend Date with custom methods
-    // like isWeekend, but not implemented here to limit to 7. */
+    // REFACTORING: Remove Middle Man (Класс LibrarySystem обращается к делегату
+    // Person через множество делегирующих методов сервера Department: под каждый
+    // запрос клиента приходится создавать в классе Department отдельный
+    // делегирующий метод, что превращает класс Department в "транзитный" класс.
+    // Необходимо заменить делегирование прямым обращением к объекту клиента Person)
+    public String fetchUserManagerName(User user) {
+        return user.getDepartment().getManagerName();
+    }
+
+    public String fetchUserManagerEmail(User user) {
+        return user.getDepartment().getManagerEmail();
+    }
+
+    public String fetchUserManagerTitle(User user) {
+        return user.getDepartment().getManagerTitle();
+    }
+
+    public String fetchUserManagerOffice(User user) {
+        return user.getDepartment().getManagerOffice();
+    }
+
+    public String fetchUserManagerPhone(User user) {
+        return user.getDepartment().getManagerPhone();
+    }
+
+    public int fetchUserManagerId(User user) {
+        return user.getDepartment().getManagerId();
+    }
+
+    public String fetchUserManagerUpperName(User user) {
+        return user.getDepartment().getManagerUpperCaseName();
+    }
+
+    public String fetchUserManagerInitials(User user) {
+        return user.getDepartment().getManagerInitials();
+    }
+
+    public String fetchUserManagerGreeting(User user) {
+        return user.getDepartment().getManagerGreeting();
+    }
+
+    // REFACTORING: Introduce Foreign Method (Класс LocalDate библиотеки java.time
+    // не предоставляет множества методов, нужных классу LibrarySystem, поэтому
+    // имеет смысл создать локальное расширение LocalDateExtended, представляющее из
+    // себя подкласс класса LocalDate либо обёртку над ним.
+
+    public String formatLocalDateShort(LocalDate date) {
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        return date.format(fmt);
+    }
+
+    public long daysBetween(LocalDate from, LocalDate to) {
+        return ChronoUnit.DAYS.between(from, to);
+    }
+
+    public LocalDate addBusinessDays(LocalDate date, int days) {
+        LocalDate res = date;
+        int added = 0;
+        while (added < days) {
+            res = res.plusDays(1);
+            if (!(res.getDayOfWeek().getValue() == 6 || res.getDayOfWeek().getValue() == 7)) {
+                added++;
+            }
+        }
+        return res;
+    }
+
+    public LocalDate nextBusinessDay(LocalDate date) {
+        LocalDate d = date.plusDays(1);
+        while (d.getDayOfWeek().getValue() == 6 || d.getDayOfWeek().getValue() == 7) {
+            d = d.plusDays(1);
+        }
+        return d;
+    }
+
+    public String verboseLocalDateInfo(LocalDate date) {
+        return "Date: " + formatLocalDateShort(date) + ", DayOfYear: " + date.getDayOfYear() + ", Leap: "
+                + date.isLeapYear();
+    }
 
     // REFACTORING: Move Field (LibrarySystem никак не использует поле; поле
     // логически должно находиться в классе Book)
