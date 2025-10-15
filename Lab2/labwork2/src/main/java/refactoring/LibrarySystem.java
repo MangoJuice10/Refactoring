@@ -10,6 +10,11 @@ import java.time.temporal.ChronoUnit;
 public class LibrarySystem {
     private List<Book> books = new ArrayList<>();
     private List<User> users = new ArrayList<>();
+    private FineService fineService;
+
+    public LibrarySystem(double fineRate) {
+        this.fineService = new FineService(fineRate);
+    }
 
     public void addBook(Book book) {
         books.add(book);
@@ -27,16 +32,8 @@ public class LibrarySystem {
         return users;
     }
 
-    // REFACTROING: Move Method (Этот метод вычисляет общую сумму долга всех
-    // пользователей, но использует метод класса FineService calculateFine(),
-    // Следует переместить этот метод в класс FineService)
     public double calculateTotalFines() {
-        double total = 0.0;
-        FineService fineService = new FineService(0.5);
-        for (User user : users) {
-            total += fineService.calculateFine(user);
-        }
-        return total;
+        return fineService.calculateTotalFines(users);
     }
 
     // REFACTORING: Extract Class (Класс Book содержит поля одновременно двух
