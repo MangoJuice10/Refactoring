@@ -1,4 +1,5 @@
 package refactoring;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -27,12 +28,13 @@ public class LibrarySystem {
     }
 
     // REFACTROING: Move Method (Этот метод вычисляет общую сумму долга всех
-    // пользователей, но использует только метод класса User calculateFine()
-    // Следует переместить этот метод в класс User)
+    // пользователей, но использует метод класса FineService calculateFine(),
+    // Следует переместить этот метод в класс FineService)
     public double calculateTotalFines() {
         double total = 0.0;
+        FineService fineService = new FineService(0.5);
         for (User user : users) {
-            total += user.calculateFine();
+            total += fineService.calculateFine(user);
         }
         return total;
     }

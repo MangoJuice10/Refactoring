@@ -1,4 +1,3 @@
-// src/test/java/com/example/LibrarySystemTest.java
 package refactoring;
 
 import org.junit.Before;
