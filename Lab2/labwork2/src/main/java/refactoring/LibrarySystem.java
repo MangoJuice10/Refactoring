@@ -8,13 +8,13 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 
 public class LibrarySystem {
+    // REFACTORING: Move Field (Поле fineRate используется классом FineService
+    // больше, чем самим классом LibrarySystem. Следует переместить поле fineRate в
+    // класс FineService)
+    private double fineRate;
     private List<Book> books = new ArrayList<>();
     private List<User> users = new ArrayList<>();
     private FineService fineService;
-
-    public LibrarySystem(double fineRate) {
-        this.fineService = new FineService(fineRate);
-    }
 
     public void addBook(Book book) {
         books.add(book);
@@ -22,6 +22,10 @@ public class LibrarySystem {
 
     public void addUser(User user) {
         users.add(user);
+    }
+
+    public double getFineRate() {
+        return fineRate;
     }
 
     public List<Book> getBooks() {
@@ -32,8 +36,12 @@ public class LibrarySystem {
         return users;
     }
 
+    // REFACTORING: Move Field (Поле fineRate используется классом FineService
+    // больше, чем самим классом LibrarySystem. Следует переместить поле fineRate в
+    // класс FineService)
+    
     public double calculateTotalFines() {
-        return fineService.calculateTotalFines(users);
+        return fineService.calculateTotalFines(users, fineRate);
     }
 
     // REFACTORING: Extract Class (Класс Book содержит поля одновременно двух
@@ -148,13 +156,5 @@ public class LibrarySystem {
     public String verboseLocalDateInfo(LocalDate date) {
         return "Date: " + formatLocalDateShort(date) + ", DayOfYear: " + date.getDayOfYear() + ", Leap: "
                 + date.isLeapYear();
-    }
-
-    // REFACTORING: Move Field (LibrarySystem никак не использует поле; поле
-    // логически должно находиться в классе Book)
-    private int publicationYear = 2020; // Default year, but should be per book.
-
-    public int getPublicationYear() {
-        return publicationYear;
     }
 }
