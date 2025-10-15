@@ -1,4 +1,3 @@
-// src/main/java/com/example/User.java
 package refactoring;
 
 import java.util.Date;

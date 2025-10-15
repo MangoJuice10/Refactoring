@@ -1,4 +1,3 @@
-// src/main/java/com/example/Person.java
 package refactoring;
 
 public class Person {
