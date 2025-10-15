@@ -16,7 +16,7 @@ public class LibrarySystemTest {
 
     @Before
     public void setUp() {
-        library = new LibrarySystem();
+        library = new LibrarySystem(0.5);
         manager = new Person("John Doe");
         dept = new Department(manager);
         user = new User("Jane Smith", dept);
