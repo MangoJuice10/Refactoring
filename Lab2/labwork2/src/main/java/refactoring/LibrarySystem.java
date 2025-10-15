@@ -12,9 +12,14 @@ public class LibrarySystem {
     // больше, чем самим классом LibrarySystem. Следует переместить поле fineRate в
     // класс FineService)
     private double fineRate;
+    private FineService fineService;
     private List<Book> books = new ArrayList<>();
     private List<User> users = new ArrayList<>();
-    private FineService fineService;
+    
+    public LibrarySystem(double fineRate) {
+        this.fineRate = fineRate;
+        this.fineService = new FineService();
+    }
 
     public void addBook(Book book) {
         books.add(book);
