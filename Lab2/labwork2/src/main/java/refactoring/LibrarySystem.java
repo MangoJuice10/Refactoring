@@ -8,17 +8,12 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 
 public class LibrarySystem {
-    // REFACTORING: Move Field (Поле fineRate используется классом FineService
-    // больше, чем самим классом LibrarySystem. Следует переместить поле fineRate в
-    // класс FineService)
-    private double fineRate;
     private FineService fineService;
     private List<Book> books = new ArrayList<>();
     private List<User> users = new ArrayList<>();
     
-    public LibrarySystem(double fineRate) {
-        this.fineRate = fineRate;
-        this.fineService = new FineService();
+    public LibrarySystem() {
+        this.fineService = new FineService(0.5);
     }
 
     public void addBook(Book book) {
@@ -30,7 +25,7 @@ public class LibrarySystem {
     }
 
     public double getFineRate() {
-        return fineRate;
+        return fineService.getFineRate();
     }
 
     public List<Book> getBooks() {
@@ -46,7 +41,7 @@ public class LibrarySystem {
     // класс FineService)
     
     public double calculateTotalFines() {
-        return fineService.calculateTotalFines(users, fineRate);
+        return fineService.calculateTotalFines(users);
     }
 
     // REFACTORING: Extract Class (Класс Book содержит поля одновременно двух
