@@ -8,6 +8,10 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 
 public class LibrarySystem {
+    // REFACTORING: Move Field (Поле fineRate используется классом FineService
+    // больше, чем самим классом LibrarySystem. Следует переместить поле fineRate в
+    // класс FineService)
+    private double fineRate;
     private List<Book> books = new ArrayList<>();
     private List<User> users = new ArrayList<>();
 
@@ -19,6 +23,10 @@ public class LibrarySystem {
         users.add(user);
     }
 
+    public double getFineRate() {
+        return fineRate;
+    }
+
     public List<Book> getBooks() {
         return books;
     }
@@ -27,14 +35,18 @@ public class LibrarySystem {
         return users;
     }
 
+    // REFACTORING: Move Field (Поле fineRate используется классом FineService
+    // больше, чем самим классом LibrarySystem. Следует переместить поле fineRate в
+    // класс FineService)
+    
     // REFACTROING: Move Method (Этот метод вычисляет общую сумму долга всех
     // пользователей, но использует метод класса FineService calculateFine(),
     // Следует переместить этот метод в класс FineService)
     public double calculateTotalFines() {
         double total = 0.0;
-        FineService fineService = new FineService(0.5);
+        FineService fineService = new FineService();
         for (User user : users) {
-            total += fineService.calculateFine(user);
+            total += fineService.calculateFine(user, fineRate);
         }
         return total;
     }
@@ -151,13 +163,5 @@ public class LibrarySystem {
     public String verboseLocalDateInfo(LocalDate date) {
         return "Date: " + formatLocalDateShort(date) + ", DayOfYear: " + date.getDayOfYear() + ", Leap: "
                 + date.isLeapYear();
-    }
-
-    // REFACTORING: Move Field (LibrarySystem никак не использует поле; поле
-    // логически должно находиться в классе Book)
-    private int publicationYear = 2020; // Default year, but should be per book.
-
-    public int getPublicationYear() {
-        return publicationYear;
     }
 }
