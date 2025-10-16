@@ -6,11 +6,13 @@ public class User {
     private String name;
     private Department department;
     private Date borrowDate;
+    private Account account;
     private String telephoneNumber;
 
     public User(String name, Department department) {
         this.name = name;
         this.department = department;
+        this.account = new Account(0.0);
     }
 
     public String getName() {
@@ -25,6 +27,10 @@ public class User {
         return borrowDate;
     }
 
+    public Account getAccount() {
+        return account;
+    }
+    
     public String getTelephoneNumber() {
         return telephoneNumber;
     }

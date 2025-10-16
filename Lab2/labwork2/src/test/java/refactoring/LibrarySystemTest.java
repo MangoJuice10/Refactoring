@@ -49,8 +49,8 @@ public class LibrarySystemTest {
     }
 
     @Test
-    public void testGetUserManagerName() {
-        assertEquals("John Doe", library.getUserManagerName(user));
+    public void testGetUserBalance() {
+        assertEquals(0.0, library.getUserBalance(user), 1e-6);
     }
 
     @Test
