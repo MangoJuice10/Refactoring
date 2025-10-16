@@ -74,22 +74,6 @@ public class LibrarySystemTest {
     }
 
     @Test
-    public void testLocalDateUtilitiesBasic() {
-        LocalDate start = LocalDate.of(2025, 10, 10);
-        LocalDate after = library.addBusinessDays(start, 3);
-        // результат не должен быть в субботу/воскресенье
-        assertFalse(after.getDayOfWeek().getValue() == 6 || after.getDayOfWeek().getValue() == 7);
-
-        long d = library.daysBetween(start, start.plusDays(5));
-        assertEquals(5L, d);
-
-        String v = library.verboseLocalDateInfo(start);
-        assertTrue(v.contains("Date:"));
-        assertTrue(v.contains("DayOfYear:"));
-        assertTrue(v.contains("Leap:"));
-    }
-
-    @Test
     public void testLocalDateExtensionUsage() {
         LocalDate start = LocalDate.of(2025, 10, 10);
         LocalDate today = LocalDate.of(2025, 10, 15);

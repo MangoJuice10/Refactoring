@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 
 public class LibrarySystem {
     private FineService fineService;
@@ -97,47 +95,9 @@ public class LibrarySystem {
         return user.getDepartment().getManager().getGreeting();
     }
 
-    // REFACTORING: Introduce Local Extension (Класс LocalDate библиотеки java.time
-    // не предоставляет множества методов, нужных классу LibrarySystem, поэтому
-    // имеет смысл создать локальное расширение LocalDateExtended, представляющее из
-    // себя подкласс класса LocalDate либо обёртку над ним.
-
-    public String formatLocalDateShort(LocalDate date) {
-        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-        return date.format(fmt);
-    }
-
-    public long daysBetween(LocalDate from, LocalDate to) {
-        return ChronoUnit.DAYS.between(from, to);
-    }
-
-    public LocalDate addBusinessDays(LocalDate date, int days) {
-        LocalDate res = date;
-        int added = 0;
-        while (added < days) {
-            res = res.plusDays(1);
-            if (!(res.getDayOfWeek().getValue() == 6 || res.getDayOfWeek().getValue() == 7)) {
-                added++;
-            }
-        }
-        return res;
-    }
-
-    public LocalDate nextBusinessDay(LocalDate date) {
-        LocalDate d = date.plusDays(1);
-        while (d.getDayOfWeek().getValue() == 6 || d.getDayOfWeek().getValue() == 7) {
-            d = d.plusDays(1);
-        }
-        return d;
-    }
-
-    public String verboseLocalDateInfo(LocalDate date) {
-        return "Date: " + formatLocalDateShort(date) + ", DayOfYear: " + date.getDayOfYear() + ", Leap: "
-                + date.isLeapYear();
-    }
-
     public LocalDate calculateReservationEnd(LocalDate reservationStart) {
-        return addBusinessDays(reservationStart, 5);
+        LocalDateExtended reservationStartExtended = new LocalDateExtended(reservationStart);
+        return reservationStartExtended.addBusinessDays(5);
     }
 
     public boolean isReservationOverdue(LocalDate reservationStart, LocalDate today) {
@@ -146,20 +106,22 @@ public class LibrarySystem {
     }
 
     public String getReservationStatus(LocalDate reservationStart, LocalDate today) {
-        LocalDate due = calculateReservationEnd(reservationStart);
-        long daysLeft = daysBetween(today, due);
+        LocalDateExtended dueExtended = new LocalDateExtended(calculateReservationEnd(reservationStart));
+        long daysLeft = LocalDateExtended.daysBetween(today, dueExtended.getLocalDate());
         if (daysLeft < 0) {
             return "Reservation overdue by " + (-daysLeft) + " day(s).";
         } else {
-            return "Reservation valid for " + daysLeft + " more day(s), until " + formatLocalDateShort(due);
+            return "Reservation valid for " + daysLeft + " more day(s), until " + dueExtended.formatLocalDateShort();
         }
     }
 
     public LocalDate getNextIssueDate(LocalDate today) {
-        return nextBusinessDay(today);
+        LocalDateExtended todayExtended = new LocalDateExtended(today);
+        return todayExtended.nextBusinessDay();
     }
 
     public String getSystemDateInfo(LocalDate today) {
-        return "[System Date Info] " + verboseLocalDateInfo(today);
+        LocalDateExtended todayExtended = new LocalDateExtended(today);
+        return "[System Date Info] " + todayExtended.verboseLocalDateInfo();
     }
 }
