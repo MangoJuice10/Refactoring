@@ -7,10 +7,12 @@ public class User {
     private Department department;
     private TelephoneNumber phone;
     private Date borrowDate;
+    private Account account;
 
     public User(String name, Department department) {
         this.name = name;
         this.department = department;
+        this.account = new Account(0.0);
     }
 
     public String getName() {
@@ -27,6 +29,10 @@ public class User {
 
     public Date getBorrowDate() {
         return borrowDate;
+    }
+
+    public Account getAccount() {
+        return account;
     }
 
     public void setPhone(TelephoneNumber phone) {
