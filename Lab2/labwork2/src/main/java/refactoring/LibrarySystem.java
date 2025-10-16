@@ -45,12 +45,8 @@ public class LibrarySystem {
                 ", Birth Year: " + book.getAuthorBirthYear();
     }
 
-    // REFACTORING: Inline Class (Класс TelephoneNumber имеет слишком мало
-    // обязанностей, и в будущем не предполагается добавлять для него новые
-    // обязанности, поэтому следует произвести встраивание класса TelephoneNumber в
-    // класс User)
     public void updateUserPhone(User user, String number) {
-        user.setPhone(new TelephoneNumber(number));
+        user.setTelephoneNumber(number);;
     }
 
     // REFACTORING: Hide Delegate (Класс LibrarySystem обращается к делегату Person

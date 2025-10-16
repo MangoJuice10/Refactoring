@@ -45,7 +45,7 @@ public class LibrarySystemTest {
     @Test
     public void testUpdateUserPhone() {
         library.updateUserPhone(user, "123-456");
-        assertEquals("123-456", user.getPhone().getNumber());
+        assertEquals("123-456", user.getTelephoneNumber());
     }
 
     @Test
