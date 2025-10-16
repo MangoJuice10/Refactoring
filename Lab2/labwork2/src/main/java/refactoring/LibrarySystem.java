@@ -49,11 +49,8 @@ public class LibrarySystem {
         user.setTelephoneNumber(number);;
     }
 
-    // REFACTORING: Hide Delegate (Класс LibrarySystem обращается к делегату Account
-    // не напрямую, а через сервер User, поэтому следует добавить в класс
-    // User делегирующий метод getAccountBalance())
     public double getUserBalance(User user) {
-        return user.getAccount().getBalance();
+        return user.getAccountBalance();
     }
 
     // REFACTORING: Introduce Foreign Method (Класс Date библиотеки java.util не

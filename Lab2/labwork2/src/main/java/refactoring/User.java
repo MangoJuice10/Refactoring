@@ -39,6 +39,10 @@ public class User {
         this.telephoneNumber = telephoneNumber;
     }
 
+    public double getAccountBalance() {
+        return account.getBalance();
+    }
+
     public void borrowBook(Date date) {
         this.borrowDate = date;
     }
