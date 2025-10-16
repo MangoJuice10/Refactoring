@@ -35,19 +35,11 @@ public class LibrarySystem {
     public List<User> getUsers() {
         return users;
     }
-
-    // REFACTORING: Move Field (Поле fineRate используется классом FineService
-    // больше, чем самим классом LibrarySystem. Следует переместить поле fineRate в
-    // класс FineService)
     
     public double calculateTotalFines() {
         return fineService.calculateTotalFines(users);
     }
 
-    // REFACTORING: Extract Class (Класс Book содержит поля одновременно двух
-    // сущностей: Книга и Автор, поэтому после выделения класса необходимо будет
-    // изменить также обращения к исходному классу, связанные с полями и методами
-    // нового класса)
     public String formatBookDetails(Book book) {
         return "Title: " + book.getTitle() + ", Author: " + book.getAuthorName() + " " + book.getAuthorSurname() +
                 ", Birth Year: " + book.getAuthorBirthYear();
