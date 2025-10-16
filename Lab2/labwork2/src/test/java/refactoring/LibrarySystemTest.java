@@ -88,4 +88,24 @@ public class LibrarySystemTest {
         assertTrue(v.contains("DayOfYear:"));
         assertTrue(v.contains("Leap:"));
     }
+
+    @Test
+    public void testLocalDateExtensionUsage() {
+        LocalDate start = LocalDate.of(2025, 10, 10);
+        LocalDate today = LocalDate.of(2025, 10, 15);
+
+        LocalDate due = library.calculateReservationEnd(start);
+        assertFalse(due.getDayOfWeek().getValue() >= 6); // не выходной
+
+        assertFalse(library.isReservationOverdue(start, today));
+
+        String status = library.getReservationStatus(start, today);
+        assertTrue(status.contains("Reservation valid"));
+
+        LocalDate nextIssue = library.getNextIssueDate(today);
+        assertTrue(nextIssue.isAfter(today));
+
+        String info = library.getSystemDateInfo(today);
+        assertTrue(info.contains("System Date Info"));
+    }
 }

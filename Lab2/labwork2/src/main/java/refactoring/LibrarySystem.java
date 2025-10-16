@@ -135,4 +135,31 @@ public class LibrarySystem {
         return "Date: " + formatLocalDateShort(date) + ", DayOfYear: " + date.getDayOfYear() + ", Leap: "
                 + date.isLeapYear();
     }
+
+    public LocalDate calculateReservationEnd(LocalDate reservationStart) {
+        return addBusinessDays(reservationStart, 5);
+    }
+
+    public boolean isReservationOverdue(LocalDate reservationStart, LocalDate today) {
+        LocalDate due = calculateReservationEnd(reservationStart);
+        return today.isAfter(due);
+    }
+
+    public String getReservationStatus(LocalDate reservationStart, LocalDate today) {
+        LocalDate due = calculateReservationEnd(reservationStart);
+        long daysLeft = daysBetween(today, due);
+        if (daysLeft < 0) {
+            return "Reservation overdue by " + (-daysLeft) + " day(s).";
+        } else {
+            return "Reservation valid for " + daysLeft + " more day(s), until " + formatLocalDateShort(due);
+        }
+    }
+
+    public LocalDate getNextIssueDate(LocalDate today) {
+        return nextBusinessDay(today);
+    }
+
+    public String getSystemDateInfo(LocalDate today) {
+        return "[System Date Info] " + verboseLocalDateInfo(today);
+    }
 }
