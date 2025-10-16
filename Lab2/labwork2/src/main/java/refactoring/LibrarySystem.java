@@ -53,55 +53,48 @@ public class LibrarySystem {
         return user.getAccountBalance();
     }
 
-    // REFACTORING: Introduce Foreign Method (Класс Date библиотеки java.util не
-    // предоставляет метода для получения даты по прошествии одной недели, поэтому
-    // имеет смысл написать внешний метод getNextWeek(Date date), принимающий на
-    // вход объект класса Date, и возвращающий нужную дату)
-    public Date getDueDate(Date borrowDate) {
-        // Дата возврата книги определяется как неделя спустя момента получения книги
-        Date dueDate = new Date(borrowDate.getTime() + 86400000 * 7); // 24*60*60*1000
-        return dueDate;
+    public Date getNextWeek(Date date) {
+        return new Date(date.getTime() + 86400000 * 7);
     }
 
-    // REFACTORING: Remove Middle Man (Класс LibrarySystem обращается к делегату
-    // Person через множество делегирующих методов сервера Department: под каждый
-    // запрос клиента приходится создавать в классе Department отдельный
-    // делегирующий метод, что превращает класс Department в "транзитный" класс.
-    // Необходимо заменить делегирование прямым обращением к объекту клиента Person)
+    public Date getDueDate(Date borrowDate) {
+        return getNextWeek(borrowDate);
+    }
+
     public String fetchUserManagerName(User user) {
-        return user.getDepartment().getManagerName();
+        return user.getDepartment().getManager().getName();
     }
 
     public String fetchUserManagerEmail(User user) {
-        return user.getDepartment().getManagerEmail();
+        return user.getDepartment().getManager().getEmail();
     }
 
     public String fetchUserManagerTitle(User user) {
-        return user.getDepartment().getManagerTitle();
+        return user.getDepartment().getManager().getTitle();
     }
 
     public String fetchUserManagerOffice(User user) {
-        return user.getDepartment().getManagerOffice();
+        return user.getDepartment().getManager().getOffice();
     }
 
     public String fetchUserManagerPhone(User user) {
-        return user.getDepartment().getManagerPhone();
+        return user.getDepartment().getManager().getPhone();
     }
 
     public int fetchUserManagerId(User user) {
-        return user.getDepartment().getManagerId();
+        return user.getDepartment().getManager().getId();
     }
 
     public String fetchUserManagerUpperName(User user) {
-        return user.getDepartment().getManagerUpperCaseName();
+        return user.getDepartment().getManager().getUpperCaseName();
     }
 
     public String fetchUserManagerInitials(User user) {
-        return user.getDepartment().getManagerInitials();
+        return user.getDepartment().getManager().getInitials();
     }
 
     public String fetchUserManagerGreeting(User user) {
-        return user.getDepartment().getManagerGreeting();
+        return user.getDepartment().getManager().getGreeting();
     }
 
     // REFACTORING: Introduce Local Extension (Класс LocalDate библиотеки java.time
