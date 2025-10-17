@@ -1,14 +1,10 @@
 package refactoring;
 
 public class CustomerNotification {
-
-    // REFACTORING NEEDED: Introduce Null Object (Слишком много проверок на null
-    // самого объекта, его полей и методов. Следует создать класс
-    // NullCustomer с методом isNull())
     public String sendBookingConfirmation(Reservation reservation) {
         Customer c = reservation.getCustomer();
 
-        if (c == null) {
+        if (c.isNull()) {
             return "no-customer";
         }
 

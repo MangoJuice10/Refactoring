@@ -29,7 +29,7 @@ public class Reservation {
     }
 
     public Customer getCustomer() {
-        return customer;
+        return (customer == null) ? new NullCustomer() : customer;
     }
 
     public int getDays() {

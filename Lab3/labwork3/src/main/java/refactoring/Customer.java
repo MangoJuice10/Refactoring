@@ -58,4 +58,8 @@ public class Customer {
         }
         return preferredChannel == NotificationChannel.SMS;
     }
+
+    public boolean isNull() {
+        return false;
+    }
 }
