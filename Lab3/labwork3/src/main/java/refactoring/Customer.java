@@ -36,4 +36,26 @@ public class Customer {
     public NotificationChannel getPreferredChannel() {
         return preferredChannel;
     }
+    
+    public String getContactInfo() {
+        if (email != null && !email.isEmpty()) {
+            return email;
+        } else {
+            return null;
+        }
+    }
+
+    public boolean isPreferredChannelEmail() {
+        if (preferredChannel == null) {
+            return false;
+        }
+        return preferredChannel == NotificationChannel.EMAIL;
+    }
+
+    public boolean isPreferredChannelSms() {
+        if (preferredChannel == null) {
+            return false;
+        }
+        return preferredChannel == NotificationChannel.SMS;
+    }
 }
