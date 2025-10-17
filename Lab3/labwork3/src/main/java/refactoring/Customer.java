@@ -3,9 +3,9 @@ package refactoring;
 public class Customer {
     private final String id;
     private final String name;
-    private final Integer loyaltyPoints; // may be null
+    private final Integer loyaltyPoints;
     private final String email;
-    private final NotificationChannel preferredChannel; // may be null
+    private final NotificationChannel preferredChannel;
 
     public enum NotificationChannel { EMAIL, SMS }
 
