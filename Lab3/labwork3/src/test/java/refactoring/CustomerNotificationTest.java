@@ -26,4 +26,26 @@ public class CustomerNotificationTest {
         String res = n.sendBookingConfirmation(r);
         assertEquals("no-customer", res);
     }
+
+    @Test
+    public void sendBookingConfirmation_noEmail_returnsNoEmail() {
+        Car car = new Car("Z3", VehicleType.SUV, 50.0, true);
+        Customer c = new Customer("u2", "Leo", 5, null, Customer.NotificationChannel.EMAIL);
+        Reservation r = new Reservation("RZ3", car, c, 3, false, 0L, 0L);
+
+        CustomerNotification n = new CustomerNotification();
+        String res = n.sendBookingConfirmation(r);
+        assertEquals("no-email", res);
+    }
+
+    @Test
+    public void sendBookingConfirmation_smsPreferred_returnsSmsNotAvailable() {
+        Car car = new Car("Z4", VehicleType.SUV, 50.0, true);
+        Customer c = new Customer("u3", "Sara", 5, "sara@example.com", Customer.NotificationChannel.SMS);
+        Reservation r = new Reservation("RZ4", car, c, 3, false, 0L, 0L);
+
+        CustomerNotification n = new CustomerNotification();
+        String res = n.sendBookingConfirmation(r);
+        assertEquals("sms-not-available", res);
+    }
 }

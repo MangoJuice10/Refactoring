@@ -3,9 +3,9 @@ package refactoring;
 public class Customer {
     private final String id;
     private final String name;
-    private final Integer loyaltyPoints; // may be null
+    private final Integer loyaltyPoints;
     private final String email;
-    private final NotificationChannel preferredChannel; // may be null
+    private final NotificationChannel preferredChannel;
 
     public enum NotificationChannel { EMAIL, SMS }
 
@@ -35,5 +35,27 @@ public class Customer {
 
     public NotificationChannel getPreferredChannel() {
         return preferredChannel;
+    }
+    
+    public String getContactInfo() {
+        if (email != null && !email.isEmpty()) {
+            return email;
+        } else {
+            return null;
+        }
+    }
+
+    public boolean isPreferredChannelEmail() {
+        if (preferredChannel == null) {
+            return false;
+        }
+        return preferredChannel == NotificationChannel.EMAIL;
+    }
+
+    public boolean isPreferredChannelSms() {
+        if (preferredChannel == null) {
+            return false;
+        }
+        return preferredChannel == NotificationChannel.SMS;
     }
 }

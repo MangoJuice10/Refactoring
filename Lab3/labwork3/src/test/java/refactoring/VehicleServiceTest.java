@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class VehicleServiceBadTest {
+public class VehicleServiceTest {
 
     @Test
     public void computeMaintenanceCost_variousTypes() {

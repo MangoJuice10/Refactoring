@@ -6,8 +6,8 @@ public class Reservation {
     private final Customer customer;
     private final int days;
     private final boolean canceled;
-    private final long createdAtEpochSeconds; // for simple time checks
-    private final long paidAtEpochSeconds; // 0 if not paid
+    private final long createdAtEpochSeconds;
+    private final long paidAtEpochSeconds;
 
     public Reservation(String id, Car car, Customer customer, int days,
                        boolean canceled, long createdAtEpochSeconds, long paidAtEpochSeconds) {

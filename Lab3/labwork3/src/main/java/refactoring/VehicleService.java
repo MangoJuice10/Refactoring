@@ -2,10 +2,9 @@ package refactoring;
 
 public class VehicleService {
 
-    /**
-     * Плохой вариант: вычисление стоимости обслуживания зависит от типа через условие.
-     * При рефакторинге: Replace Conditional with Polymorphism.
-     */
+    // REFACTORING NEEDED: Replace Conditional with Polymorphism (вычисление
+    // стоимости обслуживания зависит от типа транспортного средства, проверяемого в
+    // условном операторе)
     public double computeMaintenanceCost(Car car) {
         VehicleType type = car.getType();
         double base = car.getBasePricePerDay();
@@ -18,7 +17,6 @@ public class VehicleService {
         } else if (type == VehicleType.TRUCK) {
             return base * 0.2 + 40;
         } else {
-            // дефолт
             return base * 0.1 + 20;
         }
     }
