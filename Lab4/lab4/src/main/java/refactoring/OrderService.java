@@ -3,11 +3,11 @@ package refactoring;
 import java.util.Map;
 
 public class OrderService {
-    public void processOrder(Order order, String paymentType) {
+    public void processOrder(Order order) {
         double total = order.getTotalPrice();
         Customer customer = order.getCustomer();
         if (customer.getBalance() >= total) {
-            processPayment(order, paymentType);
+            processCreditPayment(order);
             for (Map.Entry<Product, Integer> entry : order.getItems().entrySet()) {
                 entry.getKey().reduceStock(entry.getValue());
             }
@@ -24,21 +24,14 @@ public class OrderService {
         return order.getTotalPrice() * discountRate;
     }
 
-    // Refactoring candidate: Replace Parameter with Explicit Methods (Параметр
-    // определяет поведение метода, при этом предполагается дальнейшая модификация
-    // метода или добавка новых способов оплаты; стоит заменить метод двумя
-    // отдельными методами applyCashPayment() и applyCreditPayment())
-    public void processPayment(Order order, String paymentType) {
-        if ("cash".equals(paymentType)) {
-            // Cash dummy logic
-            System.out.println("Success! The order has been paid for with cash.");
-        } else if ("credit".equals(paymentType)) {
-            // Credit logic
-            double total = order.getTotalPrice();
-            order.getCustomer().deductBalance(total);
-        } else {
-            throw new IllegalArgumentException("Unknown payment type");
-        }
+    public void processCashPayment(Order order) {
+        System.out.println("Success! The order has been paid for with cash.");
+        order.markAsPaid();
+    }
+
+    public void processCreditPayment(Order order) {
+        double total = order.getTotalPrice();
+        order.getCustomer().deductBalance(total);
         order.markAsPaid();
     }
 
@@ -121,7 +114,7 @@ public class OrderService {
         return prefix + "-" + code + "-" + System.currentTimeMillis() % 10000;
     }
 
-    public void completeOrderProcess(Order order, String paymentType, String shippingAddress, String shippingCity,
+    public void completeOrderProcess(Order order, String shippingAddress, String shippingCity,
             String shippingZip, String shippingCountry, boolean expedited) {
 
         // 1. Calculate and add shipping cost ONCE
@@ -130,7 +123,7 @@ public class OrderService {
         addShippingCostToOrder(order, shippingAddress, shippingCity, shippingZip, shippingCountry, expedited);
 
         // 2. Process order (deducts total including shipping)
-        processOrder(order, paymentType);
+        processOrder(order);
 
         // 3. Apply discounts (for reporting)
         double discountedTotal = calculateTotalWithDiscount(order, 0.1);

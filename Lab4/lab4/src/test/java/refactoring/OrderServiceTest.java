@@ -22,7 +22,7 @@ class OrderServiceTest {
 
     @Test
     void testPrOrd() {
-        service.processOrder(order, "credit");
+        service.processOrder(order);
         assertTrue(order.isPaid());
         assertEquals(1000.0, order.getTotalPrice());
         assertEquals(2000.0, customer.getBalance());
@@ -78,14 +78,14 @@ class OrderServiceTest {
 
     @Test
     void testProcessPaymentCash() {
-        service.processPayment(order, "cash");
+        service.processCashPayment(order);
         assertTrue(order.isPaid());
         assertEquals(3000.0, customer.getBalance());
     }
 
     @Test
     void testProcessPaymentCredit() {
-        service.processPayment(order, "credit");
+        service.processCreditPayment(order);
         assertTrue(order.isPaid());
         assertEquals(2000.0, customer.getBalance());
     }
@@ -103,7 +103,7 @@ class OrderServiceTest {
 
     @Test
     void testCompleteOrderProcess() {
-        service.completeOrderProcess(order, "credit", "123 Main St", "City", "12345", "USA", true);
+        service.completeOrderProcess(order, "123 Main St", "City", "12345", "USA", true);
 
         // Total: 1000 + 35 = 1035
         // 3000 - 1035 = 1965
