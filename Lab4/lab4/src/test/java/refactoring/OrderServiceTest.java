@@ -1,4 +1,3 @@
-// src/test/java/refactoring/OrderServiceTest.java
 package refactoring;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -23,7 +22,7 @@ class OrderServiceTest {
 
     @Test
     void testPrOrd() {
-        service.prOrd(order);
+        service.processOrder(order);
         assertTrue(order.isPaid());
         assertEquals(1000.0, order.getTotalPrice());
         assertEquals(2000.0, customer.getBalance());

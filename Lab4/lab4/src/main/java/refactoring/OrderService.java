@@ -1,12 +1,9 @@
-// src/main/java/refactoring/OrderService.java
 package refactoring;
 
 import java.util.Map;
 
 public class OrderService {
-    // Refactoring candidate: Rename Method (Имя метода 'prOrd' плохо отражает, что
-    // он делает; стоит заменить его на 'processOrder')
-    public void prOrd(Order order) {
+    public void processOrder(Order order) {
         double total = order.getTotalPrice();
         Customer customer = order.getCustomer();
         if (customer.getBalance() >= total) {
@@ -165,7 +162,7 @@ public class OrderService {
     // Utility method to tie things together
     public void completeOrderProcess(Order order, String paymentType, String shippingAddress, String shippingCity,
             String shippingZip, String shippingCountry, boolean expedited) {
-        prOrd(order);
+        processOrder(order);
         double discountedTotal = calculateTotalWithDiscount(order);
         boolean processed = checkAndProcessOrder(order);
         double lowDiscount = applyLowDiscount(order);
