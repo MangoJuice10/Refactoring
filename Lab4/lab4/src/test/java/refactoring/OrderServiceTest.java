@@ -37,7 +37,8 @@ class OrderServiceTest {
 
     @Test
     void testCalculateShippingCostAndAddToOrder() {
-        double cost = service.calculateShippingCostAndAddToOrder(order, "123 Main St", "City", "12345", "USA", true);
+        double cost = service.calculateShippingCost(order, "123 Main St", "City", "12345", "USA", true);
+        service.addShippingCostToOrder(order, "123 Main St", "City", "12345", "USA", true);
         assertEquals(35.0, cost, 0.001);
         assertEquals(1035.0, order.getTotalPrice());
     }
@@ -50,8 +51,9 @@ class OrderServiceTest {
         String shippingCountry = "USA";
         boolean expedited = true;
 
-        double shippingCost = service.calculateShippingCostAndAddToOrder(
+        double shippingCost = service.calculateShippingCost(
                 order, shippingAddress, shippingCity, shippingZip, shippingCountry, expedited);
+        service.addShippingCostToOrder(order, shippingAddress, shippingCity, shippingZip, shippingCountry, expedited);
 
         assertEquals(35.0, shippingCost, 0.001);
     }

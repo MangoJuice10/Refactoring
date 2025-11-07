@@ -78,12 +78,14 @@ public class OrderService {
     public void shipOrder(Order order, double shippingCost, String shippingAddress, String shippingCity,
             String shippingZip, String shippingCountry, boolean expedited) {
         // Shipping logic — uses pre-calculated cost
-        System.out.println("Shipping to: " + shippingAddress + ", " + shippingCity + " " + shippingZip + ", " + shippingCountry);
+        System.out.println(
+                "Shipping to: " + shippingAddress + ", " + shippingCity + " " + shippingZip + ", " + shippingCountry);
         if (expedited) {
             System.out.println("Expedited shipping");
         }
         System.out.println("Shipping cost: $" + shippingCost);
-        String trackingNumber = generateTrackingNumber(shippingAddress, shippingCity, shippingZip, shippingCountry, expedited);
+        String trackingNumber = generateTrackingNumber(shippingAddress, shippingCity, shippingZip, shippingCountry,
+                expedited);
         System.out.println("Tracking number: " + trackingNumber);
     }
 
@@ -93,23 +95,33 @@ public class OrderService {
     // избавиться от этого параметра)
     private void validateShippingDetails(String shippingAddress, String shippingCity, String shippingZip,
             String shippingCountry, boolean expedited) {
-        if (shippingAddress == null || shippingAddress.isEmpty()) throw new IllegalArgumentException("Invalid shipping address");
-        if (shippingCity == null || shippingCity.isEmpty()) throw new IllegalArgumentException("Invalid shipping city");
-        if (shippingZip == null || shippingZip.isEmpty()) throw new IllegalArgumentException("Invalid shipping zip");
-        if (shippingCountry == null || shippingCountry.isEmpty()) throw new IllegalArgumentException("Invalid shipping country");
+        if (shippingAddress == null || shippingAddress.isEmpty())
+            throw new IllegalArgumentException("Invalid shipping address");
+        if (shippingCity == null || shippingCity.isEmpty())
+            throw new IllegalArgumentException("Invalid shipping city");
+        if (shippingZip == null || shippingZip.isEmpty())
+            throw new IllegalArgumentException("Invalid shipping zip");
+        if (shippingCountry == null || shippingCountry.isEmpty())
+            throw new IllegalArgumentException("Invalid shipping country");
     }
 
-    // Refactoring candidate: Separate Query from Modifier (Метод не только
-    // вычисляет стоимость доставки, но и добавляет её к общей стоимости заказа)
-    public double calculateShippingCostAndAddToOrder(Order order, String shippingAddress, String shippingCity,
+    public double calculateShippingCost(Order order, String shippingAddress, String shippingCity,
+            String shippingZip, String shippingCountry, boolean expedited) {
+                double cost = 10.0;
+        if (expedited)
+            cost += 20.0;
+        if (!"USA".equalsIgnoreCase(shippingCountry))
+            cost += 30.0;
+        if (shippingZip.length() >= 5)
+            cost += 5.0;
+        return cost;
+    }
+    
+    public void addShippingCostToOrder(Order order, String shippingAddress, String shippingCity,
             String shippingZip, String shippingCountry, boolean expedited) {
         validateShippingDetails(shippingAddress, shippingCity, shippingZip, shippingCountry, expedited);
-        double cost = 10.0;
-        if (expedited) cost += 20.0;
-        if (!"USA".equalsIgnoreCase(shippingCountry)) cost += 30.0;
-        if (shippingZip.length() >= 5) cost += 5.0;
+        double cost = calculateShippingCost(order, shippingAddress, shippingCity, shippingZip, shippingCountry, expedited);
         order.addToTotal(cost);
-        return cost;
     }
 
     private String generateTrackingNumber(String shippingAddress, String shippingCity, String shippingZip,
@@ -124,8 +136,9 @@ public class OrderService {
             String shippingZip, String shippingCountry, boolean expedited) {
 
         // 1. Calculate and add shipping cost ONCE
-        double shippingCost = calculateShippingCostAndAddToOrder(order, shippingAddress, shippingCity,
+        double shippingCost = calculateShippingCost(order, shippingAddress, shippingCity,
                 shippingZip, shippingCountry, expedited);
+        addShippingCostToOrder(order, shippingAddress, shippingCity, shippingZip, shippingCountry, expedited);
 
         // 2. Process order (deducts total including shipping)
         processOrder(order, paymentType);
