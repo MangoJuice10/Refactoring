@@ -60,19 +60,19 @@ class OrderServiceTest {
 
     @Test
     void testApplyLowDiscount() {
-        double discounted = service.applyLowDiscount(order);
+        double discounted = service.applyDiscount(order, 0.95);
         assertEquals(950.0, discounted);
     }
 
     @Test
     void testApplyMediumDiscount() {
-        double discounted = service.applyMediumDiscount(order);
+        double discounted = service.applyDiscount(order, 0.85);
         assertEquals(850.0, discounted);
     }
 
     @Test
     void testApplyHighDiscount() {
-        double discounted = service.applyHighDiscount(order);
+        double discounted = service.applyDiscount(order, 0.80);
         assertEquals(800.0, discounted);
     }
 

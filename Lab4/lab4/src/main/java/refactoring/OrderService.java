@@ -20,19 +20,8 @@ public class OrderService {
         return order.getTotalPrice() * (1 - discountRate);
     }
 
-    // Refactoring candidate: Parametrize Method (Методы выполняют одну и ту же
-    // операцию с разными значениями процента скидки; стоит заменить их одним
-    // методом, принимающим процент скидки в качестве параметра)
-    public double applyLowDiscount(Order order) {
-        return order.getTotalPrice() * 0.95;
-    }
-
-    public double applyMediumDiscount(Order order) {
-        return order.getTotalPrice() * 0.85;
-    }
-
-    public double applyHighDiscount(Order order) {
-        return order.getTotalPrice() * 0.80;
+    public double applyDiscount(Order order, double discountRate) {
+        return order.getTotalPrice() * discountRate;
     }
 
     // Refactoring candidate: Replace Parameter with Explicit Methods (Параметр
@@ -145,9 +134,9 @@ public class OrderService {
 
         // 3. Apply discounts (for reporting)
         double discountedTotal = calculateTotalWithDiscount(order, 0.1);
-        double lowDiscount = applyLowDiscount(order);
-        double mediumDiscount = applyMediumDiscount(order);
-        double highDiscount = applyHighDiscount(order);
+        double lowDiscount = applyDiscount(order, 0.80);
+        double mediumDiscount = applyDiscount(order, 0.85);
+        double highDiscount = applyDiscount(order, 0.95);
 
         // 4. Prepare summary
         String summary = prepareCustomerSummary(order.getCustomer().getName(), order.getCustomer().getEmail(),
