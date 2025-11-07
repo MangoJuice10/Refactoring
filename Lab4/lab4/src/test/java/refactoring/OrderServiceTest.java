@@ -31,7 +31,7 @@ class OrderServiceTest {
 
     @Test
     void testCalculateTotalWithDiscount() {
-        double discounted = service.calculateTotalWithDiscount(order);
+        double discounted = service.calculateTotalWithDiscount(order, 0.1);
         assertEquals(900.0, discounted);
     }
 

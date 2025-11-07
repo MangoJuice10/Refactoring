@@ -17,10 +17,7 @@ public class OrderService {
         }
     }
 
-    // Refactoring candidate: Add Parameter (Методу не хватает процента скидки,
-    // поэтому он использует для неё фиксированное значение)
-    public double calculateTotalWithDiscount(Order order) {
-        double discountRate = 0.1; // Hardcoded, should be parameterized
+    public double calculateTotalWithDiscount(Order order, double discountRate) {
         return order.getTotalPrice() * (1 - discountRate);
     }
 
@@ -163,7 +160,7 @@ public class OrderService {
     public void completeOrderProcess(Order order, String paymentType, String shippingAddress, String shippingCity,
             String shippingZip, String shippingCountry, boolean expedited) {
         processOrder(order);
-        double discountedTotal = calculateTotalWithDiscount(order);
+        double discountedTotal = calculateTotalWithDiscount(order, 0.1);
         boolean processed = checkAndProcessOrder(order);
         double lowDiscount = applyLowDiscount(order);
         double mediumDiscount = applyMediumDiscount(order);
