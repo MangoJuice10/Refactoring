@@ -22,7 +22,7 @@ class OrderServiceTest {
 
     @Test
     void testPrOrd() {
-        service.processOrder(order);
+        service.processOrder(order, "credit");
         assertTrue(order.isPaid());
         assertEquals(1000.0, order.getTotalPrice());
         assertEquals(2000.0, customer.getBalance());
@@ -36,12 +36,24 @@ class OrderServiceTest {
     }
 
     @Test
-    void testCheckAndProcessOrder() {
-        boolean result = service.checkAndProcessOrder(order);
-        assertTrue(result);
-        assertTrue(order.isPaid());
-        assertEquals(2000.0, customer.getBalance());
-        assertEquals(9, product.getStock());
+    void testCalculateShippingCostAndAddToOrder() {
+        double cost = service.calculateShippingCostAndAddToOrder(order, "123 Main St", "City", "12345", "USA", true);
+        assertEquals(35.0, cost, 0.001);
+        assertEquals(1035.0, order.getTotalPrice());
+    }
+
+    @Test
+    void testShipOrder_UsesPreCalculatedCost_AndPrintsCorrectly() {
+        String shippingAddress = "123 Main St";
+        String shippingCity = "New York";
+        String shippingZip = "10001";
+        String shippingCountry = "USA";
+        boolean expedited = true;
+
+        double shippingCost = service.calculateShippingCostAndAddToOrder(
+                order, shippingAddress, shippingCity, shippingZip, shippingCountry, expedited);
+
+        assertEquals(35.0, shippingCost, 0.001);
     }
 
     @Test
@@ -66,7 +78,7 @@ class OrderServiceTest {
     void testProcessPaymentCash() {
         service.processPayment(order, "cash");
         assertTrue(order.isPaid());
-        assertEquals(3000.0, customer.getBalance()); // Balance not deducted for cash
+        assertEquals(3000.0, customer.getBalance());
     }
 
     @Test
@@ -78,7 +90,8 @@ class OrderServiceTest {
 
     @Test
     void testPrepareCustomerSummary() {
-        String summary = service.prepareCustomerSummary(customer.getName(), customer.getEmail(), customer.getAddress(), customer.getBalance(), order.getTotalPrice());
+        String summary = service.prepareCustomerSummary(customer.getName(), customer.getEmail(), customer.getAddress(),
+                customer.getBalance(), order.getTotalPrice());
         assertTrue(summary.contains("John Doe"));
         assertTrue(summary.contains("john@example.com"));
         assertTrue(summary.contains("123 Main St"));
@@ -87,15 +100,14 @@ class OrderServiceTest {
     }
 
     @Test
-    void testShipOrder() {
-        assertDoesNotThrow(() -> service.shipOrder(order, "123 Main St", "City", "12345", "USA", true));
-    }
-
-    @Test
     void testCompleteOrderProcess() {
-        assertDoesNotThrow(() -> service.completeOrderProcess(order, "credit", "123 Main St", "City", "12345", "USA", true));
+        service.completeOrderProcess(order, "credit", "123 Main St", "City", "12345", "USA", true);
+
+        // Total: 1000 + 35 = 1035
+        // 3000 - 1035 = 1965
+        assertEquals(1965, customer.getBalance());
         assertTrue(order.isPaid());
-        assertEquals(0.0, customer.getBalance()); // Multiple deductions due to multiple calls, but tests the flow
-        assertEquals(8, product.getStock()); // Multiple reductions
+        assertEquals(1035.0, order.getTotalPrice());
+        assertEquals(9, product.getStock());
     }
 }

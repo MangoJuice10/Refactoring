@@ -3,15 +3,14 @@ package refactoring;
 import java.util.Map;
 
 public class OrderService {
-    public void processOrder(Order order) {
+    public void processOrder(Order order, String paymentType) {
         double total = order.getTotalPrice();
         Customer customer = order.getCustomer();
         if (customer.getBalance() >= total) {
-            customer.deductBalance(total);
+            processPayment(order, paymentType);
             for (Map.Entry<Product, Integer> entry : order.getItems().entrySet()) {
                 entry.getKey().reduceStock(entry.getValue());
             }
-            order.markAsPaid();
         } else {
             throw new IllegalStateException("Insufficient funds");
         }
@@ -19,23 +18,6 @@ public class OrderService {
 
     public double calculateTotalWithDiscount(Order order, double discountRate) {
         return order.getTotalPrice() * (1 - discountRate);
-    }
-
-    // Refactoring candidate: Separate Query from Modifier (Метод не только
-    // проверяет, может ли заказ быть обработан, но и обрабатывает его, изменяя
-    // остаток продукта и баланс пользователя)
-    public boolean checkAndProcessOrder(Order order) {
-        double total = order.getTotalPrice();
-        Customer customer = order.getCustomer();
-        if (customer.getBalance() >= total) {
-            customer.deductBalance(total);
-            for (Map.Entry<Product, Integer> entry : order.getItems().entrySet()) {
-                entry.getKey().reduceStock(entry.getValue());
-            }
-            order.markAsPaid();
-            return true;
-        }
-        return false;
     }
 
     // Refactoring candidate: Parametrize Method (Методы выполняют одну и ту же
@@ -59,16 +41,16 @@ public class OrderService {
     // отдельными методами applyCashPayment() и applyCreditPayment())
     public void processPayment(Order order, String paymentType) {
         if ("cash".equals(paymentType)) {
-            // Cash logic
-            order.markAsPaid();
+            // Cash dummy logic
+            System.out.println("Success! The order has been paid for with cash.");
         } else if ("credit".equals(paymentType)) {
             // Credit logic
             double total = order.getTotalPrice();
             order.getCustomer().deductBalance(total);
-            order.markAsPaid();
         } else {
             throw new IllegalArgumentException("Unknown payment type");
         }
+        order.markAsPaid();
     }
 
     // Refactoring candidate: Preserve Whole Object (Вызывающий метод код сначала
@@ -93,20 +75,15 @@ public class OrderService {
     // много логически связанных между собой параметров, для которых затем
     // вызываются связанные с ними методы; нужно выделить параметры и методы в класс
     // ShippingDetails)
-    public void shipOrder(Order order, String shippingAddress, String shippingCity, String shippingZip,
-            String shippingCountry, boolean expedited) {
-        validateShippingDetails(shippingAddress, shippingCity, shippingZip, shippingCountry, expedited);
-        double cost = calculateShippingCost(shippingAddress, shippingCity, shippingZip, shippingCountry, expedited);
-        // Shipping logic...
-        System.out.println(
-                "Shipping to: " + shippingAddress + ", " + shippingCity + " " + shippingZip + ", " + shippingCountry);
+    public void shipOrder(Order order, double shippingCost, String shippingAddress, String shippingCity,
+            String shippingZip, String shippingCountry, boolean expedited) {
+        // Shipping logic — uses pre-calculated cost
+        System.out.println("Shipping to: " + shippingAddress + ", " + shippingCity + " " + shippingZip + ", " + shippingCountry);
         if (expedited) {
             System.out.println("Expedited shipping");
         }
-        System.out.println("Shipping cost: $" + cost);
-        // Additional logic: simulate tracking number generation
-        String trackingNumber = generateTrackingNumber(shippingAddress, shippingCity, shippingZip, shippingCountry,
-                expedited);
+        System.out.println("Shipping cost: $" + shippingCost);
+        String trackingNumber = generateTrackingNumber(shippingAddress, shippingCity, shippingZip, shippingCountry, expedited);
         System.out.println("Tracking number: " + trackingNumber);
     }
 
@@ -116,69 +93,65 @@ public class OrderService {
     // избавиться от этого параметра)
     private void validateShippingDetails(String shippingAddress, String shippingCity, String shippingZip,
             String shippingCountry, boolean expedited) {
-        if (shippingAddress == null || shippingAddress.isEmpty()) {
-            throw new IllegalArgumentException("Invalid shipping address");
-        }
-        if (shippingCity == null || shippingCity.isEmpty()) {
-            throw new IllegalArgumentException("Invalid shipping city");
-        }
-        if (shippingZip == null || shippingZip.isEmpty()) {
-            throw new IllegalArgumentException("Invalid shipping zip");
-        }
-        if (shippingCountry == null || shippingCountry.isEmpty()) {
-            throw new IllegalArgumentException("Invalid shipping country");
-        }
-        // No specific validation for expedited, but included in param list
+        if (shippingAddress == null || shippingAddress.isEmpty()) throw new IllegalArgumentException("Invalid shipping address");
+        if (shippingCity == null || shippingCity.isEmpty()) throw new IllegalArgumentException("Invalid shipping city");
+        if (shippingZip == null || shippingZip.isEmpty()) throw new IllegalArgumentException("Invalid shipping zip");
+        if (shippingCountry == null || shippingCountry.isEmpty()) throw new IllegalArgumentException("Invalid shipping country");
     }
 
-    private double calculateShippingCost(String shippingAddress, String shippingCity, String shippingZip,
-            String shippingCountry, boolean expedited) {
-        double cost = 10.0; // Base cost
-        if (expedited) {
-            cost += 20.0;
-        }
-        if (!"USA".equalsIgnoreCase(shippingCountry)) {
-            cost += 30.0;
-        }
-        // Dummy logic based on zip code length
-        if (shippingZip.length() > 5) {
-            cost += 5.0;
-        }
+    // Refactoring candidate: Separate Query from Modifier (Метод не только
+    // вычисляет стоимость доставки, но и добавляет её к общей стоимости заказа)
+    public double calculateShippingCostAndAddToOrder(Order order, String shippingAddress, String shippingCity,
+            String shippingZip, String shippingCountry, boolean expedited) {
+        validateShippingDetails(shippingAddress, shippingCity, shippingZip, shippingCountry, expedited);
+        double cost = 10.0;
+        if (expedited) cost += 20.0;
+        if (!"USA".equalsIgnoreCase(shippingCountry)) cost += 30.0;
+        if (shippingZip.length() >= 5) cost += 5.0;
+        order.addToTotal(cost);
         return cost;
     }
 
     private String generateTrackingNumber(String shippingAddress, String shippingCity, String shippingZip,
             String shippingCountry, boolean expedited) {
-        // Simple dummy tracking number generation
         String prefix = expedited ? "EXP" : "STD";
-        String code = shippingCountry.substring(0, 2).toUpperCase() + "-" + shippingZip.replaceAll("\\D", "")
-                .substring(0, Math.min(4, shippingZip.replaceAll("\\D", "").length()));
+        String code = shippingCountry.substring(0, 2).toUpperCase() + "-" +
+                shippingZip.replaceAll("\\D", "").substring(0, Math.min(4, shippingZip.length()));
         return prefix + "-" + code + "-" + System.currentTimeMillis() % 10000;
     }
 
-    // Utility method to tie things together
     public void completeOrderProcess(Order order, String paymentType, String shippingAddress, String shippingCity,
             String shippingZip, String shippingCountry, boolean expedited) {
-        processOrder(order);
+
+        // 1. Calculate and add shipping cost ONCE
+        double shippingCost = calculateShippingCostAndAddToOrder(order, shippingAddress, shippingCity,
+                shippingZip, shippingCountry, expedited);
+
+        // 2. Process order (deducts total including shipping)
+        processOrder(order, paymentType);
+
+        // 3. Apply discounts (for reporting)
         double discountedTotal = calculateTotalWithDiscount(order, 0.1);
-        boolean processed = checkAndProcessOrder(order);
         double lowDiscount = applyLowDiscount(order);
         double mediumDiscount = applyMediumDiscount(order);
         double highDiscount = applyHighDiscount(order);
-        processPayment(order, paymentType);
+
+        // 4. Prepare summary
         String summary = prepareCustomerSummary(order.getCustomer().getName(), order.getCustomer().getEmail(),
                 order.getCustomer().getAddress(), order.getCustomer().getBalance(), order.getTotalPrice());
+
+        // 5. Print report
         StringBuilder report = new StringBuilder();
         report.append(summary).append("\n");
-        report.append("Standard Discounted Total: $").append(discountedTotal).append("\n");
-        report.append("Processing Status: ").append(processed ? "Success" : "Failure").append("\n");
-        report.append("Possible Discount Levels:\n");
-        report.append("  Low: $").append(lowDiscount).append("\n");
-        report.append("  Medium: $").append(mediumDiscount).append("\n");
-        report.append("  High: $").append(highDiscount).append("\n");
+        report.append("Standard Discounted Total: $").append(String.format("%.2f", discountedTotal)).append("\n");
+        report.append("Shipping Cost: $").append(String.format("%.2f", shippingCost)).append("\n");
+        report.append("Possible Discounts:\n");
+        report.append("  Low: $").append(String.format("%.2f", lowDiscount)).append("\n");
+        report.append("  Medium: $").append(String.format("%.2f", mediumDiscount)).append("\n");
+        report.append("  High: $").append(String.format("%.2f", highDiscount)).append("\n");
         System.out.println(report.toString());
-        if (processed) {
-            shipOrder(order, shippingAddress, shippingCity, shippingZip, shippingCountry, expedited);
-        }
+
+        // 6. Ship — pass pre-calculated cost
+        shipOrder(order, shippingCost, shippingAddress, shippingCity, shippingZip, shippingCountry, expedited);
     }
 }

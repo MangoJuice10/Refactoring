@@ -41,4 +41,8 @@ public class Order {
     public void markAsPaid() {
         isPaid = true;
     }
+
+    public void addToTotal(double amount) {
+        totalPrice += amount;
+    }
 }
