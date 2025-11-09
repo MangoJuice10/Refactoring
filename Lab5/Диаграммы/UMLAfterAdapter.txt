@@ -1,0 +1,46 @@
+@startuml
+interface EcoSensor {
+  + double getTemperatureCelsius()
+  + int getHumidityPercent()
+  + int getCO2Ppm()
+}
+
+class ModernSensor implements EcoSensor {
+  - double tempC
+  - int humidity
+  - int co2
+  + ModernSensor(double tempC, int humidity, int co2)
+  + double getTemperatureCelsius()
+  + int getHumidityPercent()
+  + int getCO2Ppm()
+}
+
+class LegacyEcoDevice {
+  - double tempF
+  - double humidityFraction
+  - int co2Parts
+  + LegacyEcoDevice(double tempF, double humidityFraction, int co2Parts)
+  + double fetchTempFahrenheit()
+  + double fetchHumidityFraction()
+  + int fetchCO2Parts()
+}
+
+class LegacyEcoAdapter implements EcoSensor {
+  - LegacyEcoDevice legacyDevice
+  + LegacyEcoAdapter(LegacyEcoDevice legacyDevice)
+  + double getTemperatureCelsius()
+  + int getHumidityPercent()
+  + int getCO2Ppm()
+}
+
+class EcoMonitor {
+  - EcoSensor sensor
+  + EcoMonitor(EcoSensor sensor)
+  + void displayData()
+}
+
+EcoMonitor --> EcoSensor : uses
+ModernSensor ..|> EcoSensor
+LegacyEcoAdapter ..|> EcoSensor
+LegacyEcoAdapter --> LegacyEcoDevice : adapts
+@enduml
