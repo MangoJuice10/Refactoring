@@ -1,9 +1,13 @@
 package refactoring;
 
 public class EcoMonitor {
-    private final EcoSensor sensor;
+    private EcoSensor sensor;
 
     public EcoMonitor(EcoSensor sensor) {
+        this.sensor = sensor;
+    }
+
+    public void setSensor(EcoSensor sensor) {
         this.sensor = sensor;
     }
 
@@ -17,12 +21,16 @@ public class EcoMonitor {
     };
 
     public static void main(String[] args) {
-        // ModernSensor имплементирует интерфейс EcoSensor
-        EcoSensor modernSensor = new ModernSensor(25.0, 0.6, 0.2, 1013.25);
+        // ModernEcoSensor имплементирует интерфейс EcoSensor
+        EcoSensor modernSensor = new ModernEcoSensor(25.0, 0.6, 0.2, 1013.25);
         EcoMonitor ecoMonitor = new EcoMonitor(modernSensor);
-        ecoMonitor.displayData();
+        System.out.printf("Показания нового эко-сенсора: %s\n", ecoMonitor.displayData());
 
-        // LegacySensor не имплементирует интерфейс EcoSensor, поэтому клиент EcoMonitor
-        // не может с ним работать
+        // LegacyEcoSensor не имплементирует интерфейс EcoSensor, поэтому на помощь
+        // приходит LegacyEcoSensorAdapter, выступающий в качестве обёретки над классом LegacyEcoSensor
+        LegacyEcoSensor legacySensor = new LegacyEcoSensor(76.0, 56, 19, 760.0);
+        EcoSensor legacySensorAdapter = new LegacyEcoSensorAdapter(legacySensor);
+        ecoMonitor.setSensor(legacySensorAdapter);
+        System.out.printf("Показания старого эко-сенсора: %s\n", ecoMonitor.displayData());
     }
 }
