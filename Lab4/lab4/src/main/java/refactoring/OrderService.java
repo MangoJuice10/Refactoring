@@ -35,10 +35,12 @@ public class OrderService {
         order.markAsPaid();
     }
 
-    // Refactoring candidate: Preserve Whole Object (Вызывающий метод код сначала
-    // получает отдельные поля объекта класса Customer, и после этого передаёт их в
-    // метод; следует вместо этого передавать методы сам объект)
-    public String prepareCustomerSummary(String name, String email, String address, double balance, double orderTotal) {
+    public String prepareCustomerSummary(Customer customer, double orderTotal) {
+        String name = customer.getName();
+        String email = customer.getEmail();
+        String address = customer.getAddress();
+        double balance = customer.getBalance();
+
         if (email == null || email.isEmpty()) {
             throw new IllegalArgumentException("Invalid email");
         }
@@ -57,8 +59,14 @@ public class OrderService {
     // много логически связанных между собой параметров, для которых затем
     // вызываются связанные с ними методы; нужно выделить параметры и методы в класс
     // ShippingDetails)
-    public void shipOrder(Order order, double shippingCost, String shippingAddress, String shippingCity,
-            String shippingZip, String shippingCountry, boolean expedited) {
+    public void shipOrder(Order order, ShippingDetails shippingDetails) {
+        double shippingCost = shippingDetails.getShippingCost();
+        String shippingAddress = shippingDetails.getShippingAddress();
+        String shippingCity = shippingDetails.getShippingCity();
+        String shippingZip = shippingDetails.getShippingZip();
+        String shippingCountry = shippingDetails.getShippingCountry();
+        boolean expedited = shippingDetails.getExpedited();
+
         // Shipping logic — uses pre-calculated cost
         System.out.println(
                 "Shipping to: " + shippingAddress + ", " + shippingCity + " " + shippingZip + ", " + shippingCountry);
@@ -66,30 +74,16 @@ public class OrderService {
             System.out.println("Expedited shipping");
         }
         System.out.println("Shipping cost: $" + shippingCost);
-        String trackingNumber = generateTrackingNumber(shippingAddress, shippingCity, shippingZip, shippingCountry,
-                expedited);
+        String trackingNumber = shippingDetails.generateTrackingNumber();
         System.out.println("Tracking number: " + trackingNumber);
     }
 
-    // Refactoring candidate: Remove Parameter (Метод принимает параметр expedited,
-    // но никак его не использует. В будущем может была запланирована валидация в
-    // том числе этого параметра, но на данный момент она не предусмотрена. Стоит
-    // избавиться от этого параметра)
-    private void validateShippingDetails(String shippingAddress, String shippingCity, String shippingZip,
-            String shippingCountry, boolean expedited) {
-        if (shippingAddress == null || shippingAddress.isEmpty())
-            throw new IllegalArgumentException("Invalid shipping address");
-        if (shippingCity == null || shippingCity.isEmpty())
-            throw new IllegalArgumentException("Invalid shipping city");
-        if (shippingZip == null || shippingZip.isEmpty())
-            throw new IllegalArgumentException("Invalid shipping zip");
-        if (shippingCountry == null || shippingCountry.isEmpty())
-            throw new IllegalArgumentException("Invalid shipping country");
-    }
+    public double calculateShippingCost(ShippingDetails shippingDetails) {
+        String shippingZip = shippingDetails.getShippingZip();
+        String shippingCountry = shippingDetails.getShippingCountry();
+        boolean expedited = shippingDetails.getExpedited();
 
-    public double calculateShippingCost(Order order, String shippingAddress, String shippingCity,
-            String shippingZip, String shippingCountry, boolean expedited) {
-                double cost = 10.0;
+        double cost = 10.0;
         if (expedited)
             cost += 20.0;
         if (!"USA".equalsIgnoreCase(shippingCountry))
@@ -99,28 +93,18 @@ public class OrderService {
         return cost;
     }
     
-    public void addShippingCostToOrder(Order order, String shippingAddress, String shippingCity,
-            String shippingZip, String shippingCountry, boolean expedited) {
-        validateShippingDetails(shippingAddress, shippingCity, shippingZip, shippingCountry, expedited);
-        double cost = calculateShippingCost(order, shippingAddress, shippingCity, shippingZip, shippingCountry, expedited);
+    public void addShippingCostToOrder(ShippingDetails shippingDetails) {
+        Order order = shippingDetails.getOrder();
+        shippingDetails.validateShippingDetails();
+        double cost = shippingDetails.calculateShippingCost();
         order.addToTotal(cost);
     }
 
-    private String generateTrackingNumber(String shippingAddress, String shippingCity, String shippingZip,
-            String shippingCountry, boolean expedited) {
-        String prefix = expedited ? "EXP" : "STD";
-        String code = shippingCountry.substring(0, 2).toUpperCase() + "-" +
-                shippingZip.replaceAll("\\D", "").substring(0, Math.min(4, shippingZip.length()));
-        return prefix + "-" + code + "-" + System.currentTimeMillis() % 10000;
-    }
-
-    public void completeOrderProcess(Order order, String shippingAddress, String shippingCity,
-            String shippingZip, String shippingCountry, boolean expedited) {
+    public void completeOrderProcess(Order order, ShippingDetails shippingDetails) {
 
         // 1. Calculate and add shipping cost ONCE
-        double shippingCost = calculateShippingCost(order, shippingAddress, shippingCity,
-                shippingZip, shippingCountry, expedited);
-        addShippingCostToOrder(order, shippingAddress, shippingCity, shippingZip, shippingCountry, expedited);
+        double shippingCost = calculateShippingCost(shippingDetails);
+        addShippingCostToOrder(shippingDetails);
 
         // 2. Process order (deducts total including shipping)
         processOrder(order);
@@ -132,8 +116,7 @@ public class OrderService {
         double highDiscount = applyDiscount(order, 0.95);
 
         // 4. Prepare summary
-        String summary = prepareCustomerSummary(order.getCustomer().getName(), order.getCustomer().getEmail(),
-                order.getCustomer().getAddress(), order.getCustomer().getBalance(), order.getTotalPrice());
+        String summary = prepareCustomerSummary(order.getCustomer(), order.getTotalPrice());
 
         // 5. Print report
         StringBuilder report = new StringBuilder();
@@ -147,6 +130,6 @@ public class OrderService {
         System.out.println(report.toString());
 
         // 6. Ship — pass pre-calculated cost
-        shipOrder(order, shippingCost, shippingAddress, shippingCity, shippingZip, shippingCountry, expedited);
+        shipOrder(order, shippingDetails);
     }
 }

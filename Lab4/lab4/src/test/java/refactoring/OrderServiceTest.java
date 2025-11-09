@@ -9,6 +9,7 @@ class OrderServiceTest {
     private Product product;
     private Customer customer;
     private Order order;
+    private ShippingDetails shippingDetails;
     private OrderService service;
 
     @BeforeEach
@@ -37,23 +38,19 @@ class OrderServiceTest {
 
     @Test
     void testCalculateShippingCostAndAddToOrder() {
-        double cost = service.calculateShippingCost(order, "123 Main St", "City", "12345", "USA", true);
-        service.addShippingCostToOrder(order, "123 Main St", "City", "12345", "USA", true);
+        shippingDetails = new ShippingDetails(order, "123 Main St", "City", "12345", "USA", true);
+        double cost = service.calculateShippingCost(shippingDetails);
+        service.addShippingCostToOrder(shippingDetails);
         assertEquals(35.0, cost, 0.001);
         assertEquals(1035.0, order.getTotalPrice());
     }
 
     @Test
     void testShipOrder_UsesPreCalculatedCost_AndPrintsCorrectly() {
-        String shippingAddress = "123 Main St";
-        String shippingCity = "New York";
-        String shippingZip = "10001";
-        String shippingCountry = "USA";
-        boolean expedited = true;
-
+        shippingDetails = new ShippingDetails(order, "123 Main St", "New York", "10001", "USA", true);
         double shippingCost = service.calculateShippingCost(
-                order, shippingAddress, shippingCity, shippingZip, shippingCountry, expedited);
-        service.addShippingCostToOrder(order, shippingAddress, shippingCity, shippingZip, shippingCountry, expedited);
+                shippingDetails);
+        service.addShippingCostToOrder(shippingDetails);
 
         assertEquals(35.0, shippingCost, 0.001);
     }
@@ -92,8 +89,7 @@ class OrderServiceTest {
 
     @Test
     void testPrepareCustomerSummary() {
-        String summary = service.prepareCustomerSummary(customer.getName(), customer.getEmail(), customer.getAddress(),
-                customer.getBalance(), order.getTotalPrice());
+        String summary = service.prepareCustomerSummary(customer, order.getTotalPrice());
         assertTrue(summary.contains("John Doe"));
         assertTrue(summary.contains("john@example.com"));
         assertTrue(summary.contains("123 Main St"));
@@ -103,7 +99,8 @@ class OrderServiceTest {
 
     @Test
     void testCompleteOrderProcess() {
-        service.completeOrderProcess(order, "123 Main St", "City", "12345", "USA", true);
+        shippingDetails = new ShippingDetails(order, "123 Main St", "City", "12345", "USA", true);
+        service.completeOrderProcess(order, shippingDetails);
 
         // Total: 1000 + 35 = 1035
         // 3000 - 1035 = 1965
