@@ -1,12 +1,12 @@
 package refactoring;
 
-public class ModernSensor implements EcoSensor {
+public class ModernEcoSensor implements EcoSensor {
     private final double temperatureCelcius;
     private final double humidityFraction;
     private final double CO2Fraction;
     private final double pressureHpa;
 
-    public ModernSensor(double temperatureCelcius, double humidityFraction, double CO2Fraction, double pressureHpa) {
+    public ModernEcoSensor(double temperatureCelcius, double humidityFraction, double CO2Fraction, double pressureHpa) {
         this.temperatureCelcius = temperatureCelcius;
         this.humidityFraction = humidityFraction;
         this.CO2Fraction = CO2Fraction;
