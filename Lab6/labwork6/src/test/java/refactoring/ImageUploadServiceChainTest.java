@@ -1,13 +1,23 @@
 package refactoring;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import refactoring.handlers.UploadHandler;
 
 import java.util.Collections;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class ImageUploadServiceTest {
+class ImageUploadServiceChainTest {
+    private ImageUploadService uploadService;
+    private UploadHandler basicUploadHandlerChain;
+    @BeforeEach
+    void setUp() {
+        uploadService = new ImageUploadService();
+        basicUploadHandlerChain = uploadService.getBasicUploadHandlerChain();
+    }
 
     @Test
     void validSmallImagePasses() {
@@ -19,7 +29,7 @@ class ImageUploadServiceTest {
                 Collections.emptyMap(),
                 800, 600
         );
-        UploadResult res = MonolithicImageValidator.validate(req);
+        UploadResult res = basicUploadHandlerChain.check(req);
         assertTrue(res.isSuccess(), res.getMessage());
     }
 
@@ -33,7 +43,7 @@ class ImageUploadServiceTest {
                 Collections.emptyMap(),
                 800, 600
         );
-        UploadResult res = MonolithicImageValidator.validate(req);
+        UploadResult res = basicUploadHandlerChain.check(req);
         assertFalse(res.isSuccess());
         assertEquals("Not Authenticated", res.getMessage());
     }
@@ -48,7 +58,7 @@ class ImageUploadServiceTest {
                 Collections.emptyMap(),
                 800, 600
         );
-        UploadResult res = MonolithicImageValidator.validate(req);
+        UploadResult res = basicUploadHandlerChain.check(req);
         assertFalse(res.isSuccess());
         assertEquals("Invalid token", res.getMessage());
     }
@@ -63,7 +73,7 @@ class ImageUploadServiceTest {
                 Collections.emptyMap(),
                 800, 600
         );
-        UploadResult res = MonolithicImageValidator.validate(req);
+        UploadResult res = basicUploadHandlerChain.check(req);
         assertFalse(res.isSuccess());
         assertEquals("Invalid file extension", res.getMessage());
     }
@@ -78,7 +88,7 @@ class ImageUploadServiceTest {
                 Collections.emptyMap(),
                 800, 600
         );
-        UploadResult res = MonolithicImageValidator.validate(req);
+        UploadResult res = basicUploadHandlerChain.check(req);
         assertFalse(res.isSuccess());
         assertEquals("Invalid file extension", res.getMessage());
     }
@@ -93,7 +103,7 @@ class ImageUploadServiceTest {
                 Collections.emptyMap(),
                 800, 600
         );
-        UploadResult res = MonolithicImageValidator.validate(req);
+        UploadResult res = basicUploadHandlerChain.check(req);
         assertFalse(res.isSuccess());
         assertEquals("Empty content", res.getMessage());
     }
@@ -110,7 +120,7 @@ class ImageUploadServiceTest {
                 800, 600
         );
 
-        UploadResult res = MonolithicImageValidator.validate(req);
+        UploadResult res = basicUploadHandlerChain.check(req);
         assertFalse(res.isSuccess());
         assertEquals("File too large", res.getMessage());
     }
@@ -126,7 +136,7 @@ class ImageUploadServiceTest {
                 -10, 100
         );
 
-        UploadResult res = MonolithicImageValidator.validate(req);
+        UploadResult res = basicUploadHandlerChain.check(req);
         assertFalse(res.isSuccess());
         assertEquals("Invalid Dimensions", res.getMessage());
     }
@@ -142,7 +152,7 @@ class ImageUploadServiceTest {
                 5000, 5000
         );
 
-        UploadResult res = MonolithicImageValidator.validate(req);
+        UploadResult res = basicUploadHandlerChain.check(req);
         assertFalse(res.isSuccess());
         assertEquals("Image dimensions too large", res.getMessage());
     }
@@ -158,7 +168,7 @@ class ImageUploadServiceTest {
                 800, 600
         );
 
-        UploadResult res = MonolithicImageValidator.validate(req);
+        UploadResult res = basicUploadHandlerChain.check(req);
         assertFalse(res.isSuccess());
         assertEquals("Content blocked by moderation", res.getMessage());
     }
@@ -173,7 +183,7 @@ class ImageUploadServiceTest {
                 Collections.emptyMap(),
                 800, 600
         );
-        UploadResult res = MonolithicImageValidator.validate(req);
+        UploadResult res = basicUploadHandlerChain.check(req);
         assertFalse(res.isSuccess());
         assertEquals("Malicious content detected", res.getMessage());
     }

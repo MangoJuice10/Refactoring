@@ -6,6 +6,7 @@ import java.util.List;
 /* Монолитный валидатор, в котором располагаются все проверки изображения.
  * Добавление новых проверок является затруднительным из-за крайне низкой читаемости кода,
  * а также может привести к выходу из строя существующих проверок (Нарушение Open/Closed Principle) */
+@Deprecated
 public class MonolithicImageValidator {
     private static final List<String> ALLOWED_EXT = Arrays.asList("png", "jpg", "jpeg", "gif");
 
