@@ -1,6 +1,8 @@
 package refactoring.UI.Mac;
 
-public class MacCanvas {
+import refactoring.UI.Canvas;
+
+public class MacCanvas implements Canvas {
     public void render() {
         System.out.println("MacCanvas render");
     }

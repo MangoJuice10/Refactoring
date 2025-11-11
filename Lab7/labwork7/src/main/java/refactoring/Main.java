@@ -1,23 +1,27 @@
 package refactoring;
 
+import refactoring.UI.Factories.LinuxUIFactory;
+import refactoring.UI.Factories.MacUIFactory;
+import refactoring.UI.Factories.UIFactory;
+import refactoring.UI.Factories.WindowsUIFactory;
+
 public class Main {
     public static void main(String[] args) {
-        // Определение целевой платформы
-        String platform = detectPlatform();
-
-        GameEngine engine = new GameEngine(platform);
+        // Создание нужной фабрики под целевую платформу
+        UIFactory factory = getPlatformFactory();
+        GameEngine engine = new GameEngine(factory);
         engine.run();
     }
 
-    private static String detectPlatform() {
+    private static UIFactory getPlatformFactory() {
         String platformFullName = System.getProperty("os.name").toLowerCase();
-        String platformShortName = null;
+        UIFactory platformFactory = null;
         if (platformFullName.contains("win"))
-            platformShortName = "windows";
+            platformFactory = new WindowsUIFactory();
         if (platformFullName.contains("linux"))
-            platformShortName = "linux";
+            platformFactory = new LinuxUIFactory();
         if (platformFullName.contains("mac"))
-            platformShortName = "mac";
-        return platformShortName;
+            platformFactory = new MacUIFactory();
+        return platformFactory;
     }
 }

@@ -9,6 +9,10 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import refactoring.UI.Factories.LinuxUIFactory;
+import refactoring.UI.Factories.MacUIFactory;
+import refactoring.UI.Factories.WindowsUIFactory;
+
 class GameEngineTest {
 
     private final ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -26,25 +30,25 @@ class GameEngineTest {
 
     @Test
     void runsOnWindows() {
-        GameEngine engine = new GameEngine("windows");
+        GameEngine engine = new GameEngine(new WindowsUIFactory());
         engine.run();
     }
 
     @Test
     void runsOnLinux() {
-        GameEngine engine = new GameEngine("linux");
+        GameEngine engine = new GameEngine(new LinuxUIFactory());
         engine.run();
     }
 
     @Test
     void runsOnMac() {
-        GameEngine engine = new GameEngine("mac");
+        GameEngine engine = new GameEngine(new MacUIFactory());
         engine.run();
     }
 
     @Test
     void windowsOutputContainsExpectedTokens() {
-        new GameEngine("windows").run();
+        new GameEngine(new WindowsUIFactory()).run();
 
         String log = out.toString();
         assertTrue(log.contains("WindowsWindow"));
@@ -54,7 +58,7 @@ class GameEngineTest {
 
     @Test
     void linuxOutputContainsExpectedTokens() {
-        new GameEngine("linux").run();
+        new GameEngine(new LinuxUIFactory()).run();
 
         String log = out.toString();
         assertTrue(log.contains("LinuxWindow"));
@@ -64,7 +68,7 @@ class GameEngineTest {
 
     @Test
     void macOutputContainsExpectedTokens() {
-        new GameEngine("mac").run();
+        new GameEngine(new MacUIFactory()).run();
 
         String log = out.toString();
         assertTrue(log.contains("MacWindow"));

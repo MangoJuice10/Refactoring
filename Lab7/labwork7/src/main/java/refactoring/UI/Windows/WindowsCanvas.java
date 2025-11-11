@@ -1,6 +1,8 @@
 package refactoring.UI.Windows;
 
-public class WindowsCanvas {
+import refactoring.UI.Canvas;
+
+public class WindowsCanvas implements Canvas {
     public void render() {
         System.out.println("WindowsCanvas render");
     }
